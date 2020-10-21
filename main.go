@@ -7,7 +7,6 @@ import (
 	"net"
 	"os"
 	"runtime"
-	"tcpshell/helper"
 )
 
 var runApp = flag.String("exec", "", "execute app.\t\tex: bc")
@@ -45,14 +44,14 @@ func main() {
 }
 
 func handleConnection(conn net.Conn) {
-	helper.AddClient(conn)
+	AddClient(conn)
 	defer func() {
-		helper.RemoveClient(conn)
+		RemoveClient(conn)
 		_ = conn.Close()
 	}()
 	fmt.Println(conn.RemoteAddr(), "Connected!")
-	helper.HandleStdin(*runApp, conn)
-	helper.Dispatch(conn, helper.WriterIO)
+	HandleStdin(conn)
+	Dispatch(conn, WriterIO)
 	fmt.Println(conn.RemoteAddr(), "Disconnected!")
 }
 

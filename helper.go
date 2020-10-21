@@ -1,4 +1,4 @@
-package helper
+package main
 
 import (
 	"bufio"
@@ -22,8 +22,8 @@ func init() {
 	clientLock = new(sync.Mutex)
 }
 
-func execApp(runApp string) (io.ReadCloser, io.ReadCloser) {
-	appArgs := strings.Split(runApp, " ")
+func execApp() (io.ReadCloser, io.ReadCloser) {
+	appArgs := strings.Split(*runApp, " ")
 	args, err := parseArgs(strings.Join(appArgs[1:], " "))
 	if err != nil {
 		log.Fatal(err)
@@ -48,9 +48,9 @@ func execApp(runApp string) (io.ReadCloser, io.ReadCloser) {
 	return stdoutPipe, stderrPipe
 }
 
-func HandleStdin(runApp string, conn net.Conn) {
-	if len(runApp) > 0 {
-		stdoutPipe, stderrPipe := execApp(runApp)
+func HandleStdin(conn net.Conn) {
+	if len(*runApp) > 0 {
+		stdoutPipe, stderrPipe := execApp()
 		go Dispatch(stdoutPipe, conn)
 		go Dispatch(stderrPipe, conn)
 		return
